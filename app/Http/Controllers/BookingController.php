@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Request\StoreBookingRequest;
-use App\Http\Request\StoreCheckBookingRequest;
-use App\Http\Request\StorePaymentRequest;
+use App\Http\Requests\StoreBookingRequest;
+use App\Http\Requests\StoreCheckBookingRequest;
+use App\Http\Requests\StorePaymentRequest;
 use App\Models\BookingTransaction;
 use App\Models\Workshop;
 use App\Services\BookingService;
@@ -49,6 +49,8 @@ class BookingController extends Controller
 
         $data = $this->bookingService->getBookingDetails();
 
+        dd($data);
+        
         if (!$data) {
             return redirect()->route('front.index');
         }
@@ -61,7 +63,7 @@ class BookingController extends Controller
         $validated = $request->validated();
 
         try {
-            $bookingTransactionId = $this->bookingService->finalizeBokingAndPayment($validated);
+            $bookingTransactionId = $this->bookingService->finalizeBookingAndPayment($validated);
             return redirect()->route('front.booking_finished', $bookingTransactionId);
         } catch (\Exception $e) {
             Log::error('Payment storage failed: ' . $e->getMessage());
@@ -78,19 +80,19 @@ class BookingController extends Controller
         return view('booking.my_booking');
     }
 
-    public function checkBookingDetails($bookingId)
+    public function checkBookingDetails(StoreCheckBookingRequest $request, $bookingId)
     {
-
         $validated = $request->validated();
-
+    
         $bookingDetails = $this->bookingService->getBookingDetails($validated);
-
-        if ($myBookingDetails) {
-            return view('booking.my_booking_details', compact('myBookingDetails'));
+    
+        if ($bookingDetails) {
+            return view('booking.my_booking_details', ['myBookingDetails' => $bookingDetails]);
         }
-
+    
         return redirect()->route('front.check_booking')->withErrors(['errors' => 'Transaction not found']);
     }
+    
 
 
 }

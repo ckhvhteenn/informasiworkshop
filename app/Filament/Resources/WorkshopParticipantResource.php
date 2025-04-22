@@ -38,7 +38,7 @@ class WorkshopParticipantResource extends Resource
                 ->required()
                 ->maxLength(255),
 
-                Forms\Components\Select::make('workhsop_id')
+                Forms\Components\Select::make('workshop_id')
                 ->relationship('workshop', 'name')
                 ->searchable()
                 ->preload()
