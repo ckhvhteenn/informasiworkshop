@@ -13,11 +13,11 @@ class BookingRepository implements BookingRepositoryInterface
         return BookingTransaction::create($data);
     }
 
-    public function findByTrxIdAndphoneNumber($bookingTrxId, $phoneNumber)
+    public function findByTrxIdAndPhoneNumber($bookingTrxId, $phoneNumber)
     {
         return BookingTransaction::where('booking_trx_id', $bookingTrxId)
-                                    -where('phone', $phoneNumber)
-                                    -first();
+                                 ->where('phone', $phoneNumber)
+                                 ->first();
     }
 
     public function saveToSession(array $data)
@@ -32,15 +32,13 @@ class BookingRepository implements BookingRepositoryInterface
 
     public function updateSessionData(array $data)
     {
-        $orderData = session('orderData', []);
+        $orderData = Session::get('orderData', []);
         $orderData = array_merge($orderData, $data);
-        session(['orderData' => $orderData]);
+        Session::put('orderData', $orderData);
     }
 
     public function clearSession()
     {
-        session::forget('orderData');
+        Session::forget('orderData');
     }
-
-
 }
